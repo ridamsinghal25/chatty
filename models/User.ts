@@ -3,10 +3,8 @@ import mongoose, { model, models, Schema } from "mongoose";
 export interface IUser {
   _id?: mongoose.Types.ObjectId; // Optional for new documents
   email: string;
-  firstname: string;
-  lastname: string;
+  name: string;
   clerkId: string;
-  isEmailVerified?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -20,23 +18,14 @@ const userSchema = new Schema<IUser>(
       lowercase: true,
       trim: true,
     },
-    firstname: {
+    name: {
       type: String,
-      required: [true, "fullname is required"],
-      trim: true,
-    },
-    lastname: {
-      type: String,
-      required: [true, "fullname is required"],
+      required: [true, "name is required"],
       trim: true,
     },
     clerkId: {
       type: String,
       required: [true, "clerkId is required"],
-    },
-    isEmailVerified: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }
