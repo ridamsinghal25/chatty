@@ -1,5 +1,5 @@
 import mongoose, { model, models, Schema } from "mongoose";
-import { CONTENT_TYPE_ENUM, ROLE_ENUM } from "../utils/constants.js";
+import { ROLE_ENUM } from "../utils/constants.js";
 
 // Enums
 export enum Role {
@@ -8,15 +8,10 @@ export enum Role {
   SYSTEM = "system",
 }
 
-export enum ContentType {
-  TEXT = "text",
-  IMAGE = "image",
-}
-
-export type MessageContent = {
-  type: "text" | "image";
-  text?: string;
-  image?: string;
+export type Attachment = {
+  name?: string;
+  url?: string;
+  contentType?: string;
 };
 
 // Main Message Interface
@@ -24,7 +19,8 @@ export interface IMessage {
   _id?: mongoose.Types.ObjectId; // Optional for new documents
   chatId: mongoose.Types.ObjectId;
   role: Role;
-  content: MessageContent[];
+  content: string;
+  attachments?: Attachment[]; // Optional, can be undefined
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -41,27 +37,20 @@ const messageSchema = new Schema<IMessage>(
       enum: ROLE_ENUM,
       required: true,
     },
-    content: [
-      {
-        type: {
-          type: String,
-          enum: CONTENT_TYPE_ENUM,
-          required: true,
+    content: {
+      type: String,
+      required: true,
+    },
+    attachments: {
+      type: [
+        {
+          name: String,
+          url: String,
+          contentType: String,
         },
-        text: {
-          type: String,
-          required: function (this: any) {
-            return this.type === "text";
-          },
-        },
-        image: {
-          type: String,
-          required: function (this: any) {
-            return this.type === "image";
-          },
-        },
-      },
-    ],
+      ],
+      default: undefined,
+    },
   },
   { timestamps: true }
 );
