@@ -44,8 +44,6 @@ export async function POST(request: NextRequest) {
       prompt: `Generate a concise and descriptive title (3 to 4 words) based on the following user query:\n\nUser query: "${userQuery}"\n\nTitle:`,
     });
 
-    console.log("first title: ", text);
-
     const chat = await Chat.create({
       userId: user._id,
       title: text || "New Chat",

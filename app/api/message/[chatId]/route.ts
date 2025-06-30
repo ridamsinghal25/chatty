@@ -88,9 +88,16 @@ export async function POST(
     const formData = await request.formData();
     const role = formData.get("role") as string;
     const content = formData.get("content") as string;
-    const forkMessageGroupId = formData.get("forkMessageGroupId") as string;
-    const version = formData.get("version") as string;
-    const attachments = formData.getAll("attachments") as Attachment[];
+    let attachment = formData.get("attachment") as Attachment;
+
+    let parsedAttachment;
+    if (attachment && typeof attachment === "string") {
+      try {
+        parsedAttachment = JSON.parse(attachment);
+      } catch (e) {
+        console.error("Failed to parse attachment:", attachment);
+      }
+    }
 
     const { chatId } = await params;
 
@@ -112,9 +119,7 @@ export async function POST(
       chatId,
       role,
       content,
-      attachments,
-      forkMessageGroupId: forkMessageGroupId ? forkMessageGroupId : null,
-      version: version ? parseInt(version) : 1,
+      attachment: parsedAttachment,
     });
 
     if (!message) {

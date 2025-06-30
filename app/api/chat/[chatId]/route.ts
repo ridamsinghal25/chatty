@@ -51,16 +51,9 @@ export async function DELETE(
       );
     }
 
-    const deleteMessages = await Message.deleteMany({
+    await Message.deleteMany({
       chatId,
     });
-
-    if (!deleteMessages.deletedCount) {
-      return NextResponse.json(
-        { success: false, message: "Failed to delete messages" },
-        { status: 500 }
-      );
-    }
 
     const deleteChat = await Chat.findByIdAndDelete(chatId);
 
