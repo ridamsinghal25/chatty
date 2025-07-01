@@ -2,10 +2,7 @@
 
 import { useContext, useState } from "react";
 import { useChat } from "@ai-sdk/react";
-import { useParams } from "next/navigation";
-import { API_ROUTES, CONTEXT_WINDOW_SIZE } from "@/utils/constants";
-
-import { useAxiosFetcher } from "@/hooks/use-fetch";
+import { CONTEXT_WINDOW_SIZE } from "@/utils/constants";
 import { MessageContext } from "./MessageContext";
 import { IMessage } from "@/models/Messages";
 
@@ -14,13 +11,9 @@ export const MessageProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { chatId } = useParams();
-
   const [isLoading, setIsLoading] = useState(false);
   const [aiMessages, setAIMessages] = useState<any>([]);
   const [allMessages, setAllMessages] = useState<IMessage[]>([]);
-
-  const { fn: createChatMessage } = useAxiosFetcher();
 
   const {
     input,
@@ -35,29 +28,12 @@ export const MessageProvider = ({
     api: "/api/ai",
     onError: () => setIsLoading(false),
     initialMessages: aiMessages,
-    onFinish: (message) => {
+    onFinish: () => {
       setIsLoading(false);
 
       if (messages.length > CONTEXT_WINDOW_SIZE) {
         setMessages(messages.slice(-CONTEXT_WINDOW_SIZE));
       }
-
-      async function createMessage() {
-        const formData = new FormData();
-        formData.append("role", "assistant");
-        formData.append("content", message.content);
-
-        const res = await createChatMessage(`${API_ROUTES.MESSAGE}/${chatId}`, {
-          method: "POST",
-          data: formData,
-        });
-
-        if (!res.success) return;
-
-        setAllMessages((prev: IMessage[]) => [...prev, res.data]);
-      }
-
-      createMessage();
     },
   });
 
