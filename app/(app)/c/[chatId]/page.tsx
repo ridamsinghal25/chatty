@@ -11,6 +11,7 @@ import AIChatMessage from "@/components/Messages/AIChatMessage";
 import { IMessage } from "@/models/Messages";
 import toast from "react-hot-toast";
 import { useMessageContext } from "@/app/context/MessageContext/MessageContextProvider";
+import ChatSkeleton from "@/components/ChatSkeleton";
 
 export default function ChatPage() {
   const router = useRouter();
@@ -18,7 +19,8 @@ export default function ChatPage() {
 
   const messageContext = useMessageContext();
 
-  const { fn: getChatMessages } = useAxiosFetcher();
+  const { loading: isFetchingMessages, fn: getChatMessages } =
+    useAxiosFetcher();
 
   const { fn: createChatMessage } = useAxiosFetcher();
 
@@ -160,9 +162,15 @@ export default function ChatPage() {
     <div className="min-h-screen bg-[#212121] text-white flex flex-col">
       {/* Chat Messages Container */}
 
-      <ChatMessage />
+      {isFetchingMessages ? (
+        <ChatSkeleton />
+      ) : (
+        <>
+          <ChatMessage />
 
-      <AIChatMessage />
+          <AIChatMessage />
+        </>
+      )}
 
       {/* Fixed input area at bottom */}
       <div className="sticky bottom-0 z-40 text-white flex flex-col items-center justify-end px-4">
