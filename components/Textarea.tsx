@@ -118,6 +118,8 @@ function TextareaComponent({
             value={textareaValue}
             onChange={setTextareaValue}
             onKeyDown={(event) => {
+              if (!textareaValue) return;
+
               if (cloudinaryResponse && event.key === "Enter") {
                 handleKeyPress(event, {
                   name: cloudinaryResponse?.original_filename,
@@ -147,7 +149,7 @@ function TextareaComponent({
                     cloudName: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
                   },
                 }}
-                onSuccess={(result, { widget }) => {
+                onSuccess={(result) => {
                   if (result?.info) {
                     setCloudinaryResponse(
                       result?.info as CloudinaryUploadWidgetInfo
@@ -166,7 +168,10 @@ function TextareaComponent({
                       size="icon"
                       className="hover:text-white hover:bg-gray-700 hover:rounded-full"
                       onClick={() => {
-                        setCloudinaryResponse(null);
+                        if (cloudinaryResponse) {
+                          handleDelete();
+                        }
+
                         open();
                       }}
                     >
@@ -202,6 +207,7 @@ function TextareaComponent({
                 size="icon"
                 className="bg-gray-100 rounded-full hover:!bg-gray-400"
                 type="submit"
+                disabled={!textareaValue}
               >
                 {isLoading ? (
                   <div>

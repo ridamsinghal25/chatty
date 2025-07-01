@@ -44,11 +44,11 @@ export function AppSidebar() {
 
   const chatContext = useChatContext();
 
+  const { fn: deleteChat } = useAxiosFetcher();
+
   if (!chatContext) return;
 
   const { isLoading, chats, setChats } = chatContext;
-
-  const { fn: deleteChat } = useAxiosFetcher();
 
   const handleDeleteChat = async (chatId: string) => {
     const res = await deleteChat(`${API_ROUTES.CHAT}/${chatId}`, {
@@ -117,7 +117,11 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     tooltip="New Chat"
                     className="cursor-pointer hover:bg-[#424242]"
-                    onClick={() => toggleSidebar()}
+                    onClick={() => {
+                      if (!open) return;
+
+                      toggleSidebar();
+                    }}
                   >
                     <SquarePen size={20} />
                     <span>New Chat</span>
@@ -204,7 +208,7 @@ export function AppSidebar() {
                               variant="ghost"
                               className="text-red-400 cursor-pointer w-full hover:!bg-[#424242] hover:!text-red-400 focus-visible:ring-0 rounded-xl"
                               onClick={() =>
-                                handleDeleteChat(chat._id!?.toString())
+                                handleDeleteChat(chat._id!.toString())
                               }
                             >
                               <Trash2 size={16} className="text-red-400 mr-2" />

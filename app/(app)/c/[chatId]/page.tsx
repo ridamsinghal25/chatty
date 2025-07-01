@@ -18,7 +18,11 @@ export default function ChatPage() {
 
   const messageContext = useMessageContext();
 
-  if (!messageContext) return;
+  const { fn: getChatMessages } = useAxiosFetcher();
+
+  const { fn: createChatMessage } = useAxiosFetcher();
+
+  if (!messageContext) return null;
 
   const {
     isLoading,
@@ -32,12 +36,8 @@ export default function ChatPage() {
     handleSubmit,
   } = messageContext;
 
-  const { fn: getChatMessages } = useAxiosFetcher();
-
-  const { fn: createChatMessage } = useAxiosFetcher();
-
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !messageContext) return;
 
     async function fetchMessages() {
       const response = await getChatMessages(
@@ -57,6 +57,7 @@ export default function ChatPage() {
       if (uiMessages.length === 1) {
         setIsLoading(true);
         handleSubmit();
+
         setAllMessages(response.data);
         return;
       }
@@ -77,7 +78,14 @@ export default function ChatPage() {
       setAllMessages([]);
       setMessages([]);
     };
-  }, [chatId]);
+  }, [
+    chatId,
+    router,
+    setAIMessages,
+    setAllMessages,
+    setIsLoading,
+    setMessages,
+  ]);
 
   const handleChatSubmit = async (
     event: any,

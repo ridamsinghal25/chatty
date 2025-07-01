@@ -7,6 +7,7 @@ import { API_ROUTES, CONTEXT_WINDOW_SIZE } from "@/utils/constants";
 
 import { useAxiosFetcher } from "@/hooks/use-fetch";
 import { MessageContext } from "./MessageContext";
+import { IMessage } from "@/models/Messages";
 
 export const MessageProvider = ({
   children,
@@ -17,8 +18,7 @@ export const MessageProvider = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [aiMessages, setAIMessages] = useState<any>([]);
-  const [allMessages, setAllMessages] = useState<any>([]);
-  const [gptModel, setGPTModel] = useState("gpt-4o");
+  const [allMessages, setAllMessages] = useState<IMessage[]>([]);
 
   const { fn: createChatMessage } = useAxiosFetcher();
 
@@ -54,7 +54,7 @@ export const MessageProvider = ({
 
         if (!res.success) return;
 
-        setAllMessages((prev: any[]) => [...prev, res.data]);
+        setAllMessages((prev: IMessage[]) => [...prev, res.data]);
       }
 
       createMessage();

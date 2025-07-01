@@ -5,7 +5,6 @@ import {
   ChevronDown,
   Crown,
   Ellipsis,
-  MessageSquare,
   MessageSquareText,
   Sparkles,
   Trash2,
@@ -38,14 +37,13 @@ export function Header() {
   const chatId = usePathname()?.split("/c/")[1];
   const router = useRouter();
   const { isSignedIn } = useAuth();
+  const { fn: deleteChat } = useAxiosFetcher();
 
   const chatContext = useChatContext();
 
   if (!chatContext) return;
 
   const { setChats } = chatContext;
-
-  const { fn: deleteChat } = useAxiosFetcher();
 
   const handleDeleteChat = async (deleteChatId: string) => {
     const res = await deleteChat(`${API_ROUTES.CHAT}/${chatId}`, {

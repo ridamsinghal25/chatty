@@ -20,6 +20,10 @@ export default function Page() {
 
   const messageContext = useMessageContext();
 
+  const { fn: createChatFn } = useAxiosFetcher();
+
+  const { fn: createMessageFn } = useAxiosFetcher();
+
   if (!chatContext) return;
 
   if (!messageContext) return;
@@ -35,10 +39,6 @@ export default function Page() {
     handleInputChange,
     messages,
   } = messageContext;
-
-  const { fn: createChatFn } = useAxiosFetcher();
-
-  const { fn: createMessageFn } = useAxiosFetcher();
 
   const handleSendMessage = async (attachment?: {
     name: string;
@@ -112,7 +112,7 @@ export default function Page() {
       <div className="h-[90vh] bg-[#212121] text-white flex flex-col items-center justify-center px-4">
         <div className="w-full mb-32 max-w-3xl flex flex-col items-center">
           <h1 className="text-3xl font-normal text-center mb-12 text-gray-200">
-            What's on your mind today?
+            What&apos;s on your mind today?
           </h1>
 
           <div className="fixed bottom-0 left-0 pb-4 flex justify-center w-full z-50 bg-[#212121] sm:static  sm:p-0 sm:z-auto">

@@ -5,11 +5,11 @@ import { API_ROUTES } from "@/utils/constants";
 
 import { useAxiosFetcher } from "@/hooks/use-fetch";
 import { ChatContext } from "./ChatContext";
-import { useAuth } from "@clerk/nextjs";
+import { IChat } from "@/models/Chat";
 
 export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [chats, setChats] = useState<any>([]);
+  const [chats, setChats] = useState<IChat[]>([]);
 
   const { fn: getChats } = useAxiosFetcher(false);
 
@@ -29,7 +29,7 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
     if (chats.length) return;
 
     fetchChats();
-  }, []);
+  }, [getChats, chats.length]);
 
   return (
     <ChatContext.Provider
