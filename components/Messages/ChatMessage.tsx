@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Check, Copy, Pencil, X } from "lucide-react";
-import { Message } from "ai";
+import { ChatRequestOptions, CreateMessage, Message } from "ai";
 import { Attachment, IMessage } from "@/models/Messages";
 import { Textarea } from "../ui/textarea";
 import { useAxiosFetcher } from "@/hooks/use-fetch";
@@ -16,14 +16,15 @@ import { useMessageContext } from "@/app/context/MessageContext/MessageContextPr
 
 export function ChatMessage() {
   const { open, isMobile } = useSidebar();
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<string>("");
   const [editingMessage, setEditingMessage] = useState<{
     id: string;
     content: string;
   } | null>(null);
   const { loading: saving, fn: saveMessage } = useAxiosFetcher();
   const [selectedImage, setSelectedImage] = useState<Attachment>();
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [isResponseCopied, setIsResponseCopied] = useState<string>("");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -43,17 +44,37 @@ export function ChatMessage() {
     ) => void;
     setAllMessages: Dispatch<SetStateAction<IMessage[]>>;
     append: (
-      message: any,
-      chatRequestOptions?: any
+      message: Message | CreateMessage,
+      chatRequestOptions?: ChatRequestOptions
     ) => Promise<string | null | undefined>;
     status: "submitted" | "streaming" | "ready" | "error";
   } = messageContext;
 
-  const handleCopy = async (value: string) => {
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [allMessages]);
+
+  const handleCopy = async (message: IMessage) => {
     try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      if (!message._id) return;
+
+      await navigator.clipboard.writeText(message.content);
+      setCopied(message._id?.toString());
+      setTimeout(() => setCopied(""), 1500);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const handleResponseCopy = async (message: IMessage) => {
+    try {
+      if (!message._id) return;
+
+      await navigator.clipboard.writeText(message.content);
+      setIsResponseCopied(message._id?.toString());
+      setTimeout(() => setIsResponseCopied(""), 1500);
     } catch (err) {
       console.error("Failed to copy:", err);
     }
@@ -96,12 +117,6 @@ export function ChatMessage() {
     status === "streaming"
       ? allMessages.slice(0, -1)
       : allMessages;
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [allMessages]);
 
   return (
     <div className="flex-1 flex flex-col items-center px-4 py-8 pb-32 ">
@@ -188,10 +203,10 @@ export function ChatMessage() {
                   <div className="group w-full h-10 flex justify-end mt-1">
                     <Button
                       variant="ghost"
-                      onClick={() => handleCopy(m.content)}
+                      onClick={() => handleCopy(m)}
                       className="hidden group-hover:block"
                     >
-                      {copied ? (
+                      {copied === m._id?.toString() ? (
                         <Check />
                       ) : (
                         <Copy strokeWidth={2.5} className="rotate-90" />
@@ -202,7 +217,7 @@ export function ChatMessage() {
                       <Button
                         variant="ghost"
                         onClick={() =>
-                          handleEditMessage(m._id!?.toString(), m.content)
+                          handleEditMessage(m._id!.toString(), m.content)
                         }
                         className="hidden group-hover:block"
                       >
@@ -230,9 +245,9 @@ export function ChatMessage() {
                     <div className=" w-full h-10 flex justify-start mt-1">
                       <Button
                         variant="ghost"
-                        onClick={() => handleCopy(m.content)}
+                        onClick={() => handleResponseCopy(m)}
                       >
-                        {copied ? (
+                        {isResponseCopied === m._id?.toString() ? (
                           <Check />
                         ) : (
                           <Copy strokeWidth={2.5} className="rotate-90" />
