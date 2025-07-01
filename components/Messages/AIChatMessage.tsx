@@ -2,7 +2,6 @@
 
 import { useSidebar } from "@/components/ui/sidebar";
 import { MemoizedChatItem } from "@/components/Messages/ChatItem";
-import { Separator } from "@/components/ui/separator";
 import { useMessageContext } from "@/app/context/MessageContext/MessageContextProvider";
 
 function AIChatMessage() {
@@ -36,7 +35,6 @@ function AIChatMessage() {
                     message={{ role: "assistant", content: message?.content }}
                   />
                 </div>
-                <Separator className="my-4" />
               </div>
             </div>
           </div>
