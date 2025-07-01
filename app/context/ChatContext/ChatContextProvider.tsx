@@ -20,9 +20,9 @@ export const ChatProvider = ({ children }: { children: React.ReactNode }) => {
         method: "GET",
       });
 
+      setIsLoading(false);
       if (!res?.success) return;
 
-      setIsLoading(false);
       setChats(res.data);
     }
 

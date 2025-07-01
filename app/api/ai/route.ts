@@ -8,8 +8,8 @@ import { NextResponse } from "next/server";
 
 const mem0Client = new MemoryClient({ apiKey: process.env.MEM0_API_KEY! });
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+// Allow streaming responses up to 40 seconds
+export const maxDuration = 40;
 
 export async function POST(req: Request) {
   const { userId } = await auth();

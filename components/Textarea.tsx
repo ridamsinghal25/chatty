@@ -207,7 +207,7 @@ function TextareaComponent({
                 size="icon"
                 className="bg-gray-100 rounded-full hover:!bg-gray-400"
                 type="submit"
-                disabled={!textareaValue}
+                disabled={!textareaValue && !isLoading}
               >
                 {isLoading ? (
                   <div>

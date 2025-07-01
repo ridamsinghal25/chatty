@@ -36,6 +36,7 @@ export default function ChatPage() {
     stop,
     handleInputChange,
     handleSubmit,
+    append,
   } = messageContext;
 
   useEffect(() => {
@@ -58,7 +59,10 @@ export default function ChatPage() {
 
       if (uiMessages.length === 1) {
         setIsLoading(true);
-        handleSubmit();
+
+        handleSubmit(undefined, {
+          experimental_attachments: uiMessages[0].experimental_attachments,
+        });
 
         setAllMessages(response.data);
         return;
