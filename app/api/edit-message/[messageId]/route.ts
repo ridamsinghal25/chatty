@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { messageId: string } }
+  { params }: { params: Promise<{ messageId: string }> }
 ) {
   const { userId } = await auth();
 

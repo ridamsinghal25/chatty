@@ -7,7 +7,7 @@ import mongoose from "mongoose";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { chatId: string } }
+  { params }: { params: Promise<{ chatId: string }> }
 ) {
   const { userId } = await auth();
 
@@ -88,14 +88,14 @@ export async function POST(
     const formData = await request.formData();
     const role = formData.get("role") as string;
     const content = formData.get("content") as string;
-    let attachment = formData.get("attachment") as Attachment;
+    const attachment = formData.get("attachment") as Attachment;
 
     let parsedAttachment;
     if (attachment && typeof attachment === "string") {
       try {
         parsedAttachment = JSON.parse(attachment);
-      } catch (e) {
-        console.error("Failed to parse attachment:", attachment);
+      } catch (err) {
+        console.error("Failed to parse attachment:", err);
       }
     }
 
